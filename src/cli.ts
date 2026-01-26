@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import commandLineArgs from "command-line-args";
 import { runRender } from "./cmd_render.js";
 import { runWatch } from "./cmd_watch.js";
