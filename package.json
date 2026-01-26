@@ -5,11 +5,15 @@
   "bin": {
     "scimd": "./dist/cli.js"
   },
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "node scripts/build.mjs",
     "dev": "node scripts/dev.mjs",
     "clean": "rm -rf dist out",
-    "prepack": "node scripts/build.mjs"
+    "prepack": "node scripts/build.mjs",
+    "prepare": "node scripts/build.mjs"
   },
   "devDependencies": {
     "@types/command-line-args": "^5.2.3",
