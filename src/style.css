@@ -1,0 +1,95 @@
+@import "github-markdown-css/github-markdown.css";
+
+.markdown-body {
+	box-sizing: border-box;
+	min-width: 200px;
+	max-width: 980px;
+	margin: 0 auto;
+	padding: 45px;
+}
+
+.markdown-body > h1 {
+	margin-bottom: 0.25rem;
+}
+
+.markdown-body > .title-meta {
+	margin-bottom: 8px;
+	font-size: 0.95rem;
+	color: #57606a;
+}
+
+.numbered-headings {
+	counter-reset: h2;
+}
+
+.numbered-headings h2 {
+	counter-reset: h3;
+}
+
+.numbered-headings h3 {
+	counter-reset: h4;
+}
+
+.numbered-headings h4 {
+	counter-reset: h5;
+}
+
+.numbered-headings h2::before {
+	counter-increment: h2;
+	content: counter(h2) ". ";
+}
+
+.numbered-headings h3::before {
+	counter-increment: h3;
+	content: counter(h2) "." counter(h3) " ";
+}
+
+.numbered-headings h4::before {
+	counter-increment: h4;
+	content: counter(h2) "." counter(h3) "." counter(h4) " ";
+}
+
+.numbered-headings h5::before {
+	counter-increment: h5;
+	content: counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) " ";
+}
+
+.markdown-body > .toc-marker {
+	display: none;
+}
+
+.numbered-headings .toc-marker + ol {
+	counter-reset: toc;
+	list-style: none;
+	padding-left: 1.5em;
+}
+
+.numbered-headings .toc-marker + ol li {
+	display: block;
+}
+
+.numbered-headings .toc-marker + ol li::before {
+	counter-increment: toc;
+	content: counters(toc, ".") ". ";
+}
+
+.numbered-headings .toc-marker + ol li > a {
+	margin-left: 0.25em;
+}
+
+.numbered-headings .toc-marker + ol ol {
+	counter-reset: toc;
+	list-style: none;
+	padding-left: 1.5em;
+}
+
+.numbered-headings .toc-marker + ol ol li::before {
+	counter-increment: toc;
+	content: counters(toc, ".") ". ";
+}
+
+@media (max-width: 767px) {
+	.markdown-body {
+		padding: 15px;
+	}
+}

@@ -1,0 +1,29 @@
+{
+  "name": "@lcwllmr/scimd",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "scimd": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/dev.mjs",
+    "clean": "rm -rf dist out",
+    "prepack": "node scripts/build.mjs"
+  },
+  "devDependencies": {
+    "@types/command-line-args": "^5.2.3",
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^25.0.10",
+    "esbuild": "^0.27.2",
+    "github-markdown-css": "^5.8.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@vscode/markdown-it-katex": "^1.1.2",
+    "chokidar": "^5.0.0",
+    "command-line-args": "^6.0.1",
+    "markdown-it": "^14.1.0"
+  }
+}
