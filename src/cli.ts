@@ -6,8 +6,8 @@ import { runWatch } from "./cmd_watch.js";
 
 const usage = [
   "Usage:",
-  "  mmdpub render <file.md> [-o <output-dir>]",
-  "  mmdpub watch <file.md> [-p <port>]",
+  "  scimd render <file.md> [-o <output-dir>]",
+  "  scimd watch <file.md> [-p <port>]",
 ].join("\n");
 
 type MainOptions = {

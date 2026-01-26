@@ -22,7 +22,7 @@ export function buildDocumentMarkdown(
   options: EnrichOptions,
 ): PreprocessResult {
   const parts: string[] = [];
-  const tocMarker = "[mmdpub-toc]";
+  const tocMarker = "[scimd-toc]";
 
   parts.push(`# ${options.title}`);
 

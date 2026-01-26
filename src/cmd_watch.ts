@@ -5,7 +5,7 @@ import chokidar from "chokidar";
 import commandLineArgs from "command-line-args";
 import { processMarkdown } from "./markdown_process.js";
 
-const usage = "Usage: mmdpub watch <file.md> [-p <port>]";
+const usage = "Usage: scimd watch <file.md> [-p <port>]";
 const defaultPort = 3000;
 
 type WatchOptions = {
@@ -195,9 +195,9 @@ function buildHtml(filePath: string, templateHtml: string): string {
       .replace("{{CONTENT}}", `${errorBlock}${result.html}\n${reloadScript}`);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    const errorHtml = `<pre class="mmdpub-error">${escapeHtml(message)}</pre>`;
+    const errorHtml = `<pre class="scimd-error">${escapeHtml(message)}</pre>`;
     return templateHtml
-      .replace("{{TITLE}}", "mmdpub")
+      .replace("{{TITLE}}", "scimd")
       .replace("{{BODY_CLASS}}", "")
       .replace("{{CONTENT}}", `${errorHtml}\n${reloadScript}`);
   }
@@ -205,5 +205,5 @@ function buildHtml(filePath: string, templateHtml: string): string {
 
 function formatDocumentErrors(errors: string[]): string {
   const message = ["Document errors:", ...errors.map((error) => `- ${error}`)].join("\n");
-  return `<pre class="mmdpub-error">${escapeHtml(message)}</pre>`;
+  return `<pre class="scimd-error">${escapeHtml(message)}</pre>`;
 }

@@ -20,7 +20,7 @@ export function processMarkdown(markdown: string, options: ProcessOptions = {}):
   const frontmatter = parseFrontmatter(markdown);
   const numberedHeadings = frontmatter.numberedHeadings ?? options.defaultNumberedHeadings ?? true;
   const tocEnabled = frontmatter.toc ?? options.defaultToc ?? false;
-  const titleValue = frontmatter.title ?? options.defaultTitle ?? "mmdpub";
+  const titleValue = frontmatter.title ?? options.defaultTitle ?? "scimd";
 
   // Preprocess markdown to inject title/meta/abstract/TOC before rendering.
   const preprocessed = buildDocumentMarkdown(frontmatter, {

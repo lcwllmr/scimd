@@ -3,7 +3,7 @@ import { extname, join } from "node:path";
 import commandLineArgs from "command-line-args";
 import { processMarkdown } from "./markdown_process.js";
 
-const usage = "Usage: mmdpub render <file.md> [-o <output-dir>]";
+const usage = "Usage: scimd render <file.md> [-o <output-dir>]";
 
 type RenderOptions = {
   input?: string;
