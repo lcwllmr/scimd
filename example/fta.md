@@ -21,6 +21,9 @@ $$
 and $a_n \neq 0$.
 Then $p$ has a complex root.
 
+![./z2.light.png]
+![./z2.dark.png]
+
 ## Proofs
 
 ### Liouville via a global minimum of $|p|$
