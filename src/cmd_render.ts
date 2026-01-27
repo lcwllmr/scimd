@@ -1,5 +1,5 @@
-import { copyFileSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
-import { extname, join } from "node:path";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { dirname, extname, join } from "node:path";
 import commandLineArgs from "command-line-args";
 import { processMarkdown } from "./markdown_process.js";
 
@@ -75,6 +75,17 @@ export function runRender(argv: string[]): void {
   const styleUrl = new URL("./style.css", import.meta.url);
   const stylePath = join(outputDir, "style.css");
   copyFileSync(styleUrl, stylePath);
+
+  const inputDir = dirname(filePath);
+  for (const image of result.images) {
+    const srcPath = join(inputDir, image.fileName);
+    const destPath = join(outputDir, image.fileName);
+    if (!existsSync(srcPath)) {
+      console.log(`Missing image file: ${image.fileName}`);
+      continue;
+    }
+    copyFileSync(srcPath, destPath);
+  }
 }
 
 function escapeHtml(value: string): string {

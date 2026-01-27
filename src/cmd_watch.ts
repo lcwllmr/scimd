@@ -1,6 +1,6 @@
 import { readFileSync, statSync } from "node:fs";
 import { createServer } from "node:http";
-import { extname } from "node:path";
+import { dirname, extname, join } from "node:path";
 import chokidar from "chokidar";
 import commandLineArgs from "command-line-args";
 import { processMarkdown } from "./markdown_process.js";
@@ -16,6 +16,7 @@ type WatchOptions = {
 type WatchState = {
   clients: Set<import("node:http").ServerResponse>;
   reloadTimer: NodeJS.Timeout | null;
+  imageFiles: Set<string>;
 };
 
 const reloadScript = `<script>
@@ -83,15 +84,16 @@ export function runWatch(argv: string[]): void {
   const styleUrl = new URL("./style.css", import.meta.url);
   const styleCss = readFileSync(styleUrl);
 
-  const state: WatchState = { clients: new Set(), reloadTimer: null };
+  const state: WatchState = { clients: new Set(), reloadTimer: null, imageFiles: new Set() };
 
   const server = createServer((req, res) => {
     const url = req.url ?? "/";
 
     if (url === "/" || url.startsWith("/?")) {
-      const responseHtml = buildHtml(filePath, templateHtml);
+      const response = buildHtml(filePath, templateHtml);
+      state.imageFiles = response.imageFiles;
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-      res.end(responseHtml);
+      res.end(response.html);
       return;
     }
 
@@ -113,6 +115,26 @@ export function runWatch(argv: string[]): void {
       req.on("close", () => {
         state.clients.delete(res);
       });
+      return;
+    }
+
+    const imageName = extractSiblingPath(url);
+    if (imageName && state.imageFiles.has(imageName)) {
+      const imagePath = join(dirname(filePath), imageName);
+      try {
+        const stats = statSync(imagePath);
+        if (!stats.isFile()) {
+          throw new Error("Not a file");
+        }
+        const ext = extname(imageName).toLowerCase();
+        const contentType = imageContentType(ext);
+        const data = readFileSync(imagePath);
+        res.writeHead(200, { "Content-Type": contentType });
+        res.end(data);
+      } catch {
+        res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+        res.end("Not found");
+      }
       return;
     }
 
@@ -182,28 +204,74 @@ export function runWatch(argv: string[]): void {
   process.on("SIGTERM", () => shutdown("SIGTERM"));
 }
 
-function buildHtml(filePath: string, templateHtml: string): string {
+type RenderedDocument = {
+  html: string;
+  imageFiles: Set<string>;
+};
+
+function buildHtml(filePath: string, templateHtml: string): RenderedDocument {
   try {
     const markdown = readFileSync(filePath, "utf8");
     const result = processMarkdown(markdown, { throwOnError: false });
     const errorBlock = result.errors.length > 0 ? formatDocumentErrors(result.errors) : "";
     const bodyClass = result.numberedHeadings ? " numbered-headings" : "";
     console.log(`Rendered ${filePath} at ${new Date().toLocaleTimeString()}`);
-    return templateHtml
+    const html = templateHtml
       .replace("{{TITLE}}", escapeHtml(result.title))
       .replace("{{BODY_CLASS}}", bodyClass)
       .replace("{{CONTENT}}", `${errorBlock}${result.html}\n${reloadScript}`);
+    const imageFiles = new Set(result.images.map((image) => image.fileName));
+    return { html, imageFiles };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     const errorHtml = `<pre class="scimd-error">${escapeHtml(message)}</pre>`;
-    return templateHtml
-      .replace("{{TITLE}}", "scimd")
-      .replace("{{BODY_CLASS}}", "")
-      .replace("{{CONTENT}}", `${errorHtml}\n${reloadScript}`);
+    return {
+      html: templateHtml
+        .replace("{{TITLE}}", "scimd")
+        .replace("{{BODY_CLASS}}", "")
+        .replace("{{CONTENT}}", `${errorHtml}\n${reloadScript}`),
+      imageFiles: new Set(),
+    };
   }
 }
 
 function formatDocumentErrors(errors: string[]): string {
   const message = ["Document errors:", ...errors.map((error) => `- ${error}`)].join("\n");
   return `<pre class="scimd-error">${escapeHtml(message)}</pre>`;
+}
+
+function extractSiblingPath(url: string): string | null {
+  let pathname = url;
+  try {
+    pathname = new URL(url, "http://localhost").pathname;
+  } catch {
+    return null;
+  }
+  if (!pathname.startsWith("/")) {
+    return null;
+  }
+  const decoded = decodeURIComponent(pathname);
+  const trimmed = decoded.slice(1);
+  if (!trimmed || trimmed.includes("/") || trimmed.includes("\\") || trimmed.includes("..")) {
+    return null;
+  }
+  return trimmed;
+}
+
+function imageContentType(ext: string): string {
+  switch (ext) {
+    case ".png":
+      return "image/png";
+    case ".jpg":
+    case ".jpeg":
+      return "image/jpeg";
+    case ".gif":
+      return "image/gif";
+    case ".svg":
+      return "image/svg+xml";
+    case ".webp":
+      return "image/webp";
+    default:
+      return "application/octet-stream";
+  }
 }

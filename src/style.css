@@ -58,6 +58,27 @@
 	display: none;
 }
 
+.scimd-image {
+	display: block;
+	max-width: 75%;
+	height: auto;
+	margin: 1.5rem auto;
+}
+
+.scimd-image--dark {
+	display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+	.scimd-image--dark {
+		display: block;
+	}
+
+	.scimd-image--light {
+		display: none;
+	}
+}
+
 .numbered-headings .toc-marker + ol {
 	counter-reset: toc;
 	list-style: none;
@@ -91,5 +112,9 @@
 @media (max-width: 767px) {
 	.markdown-body {
 		padding: 15px;
+	}
+
+	.scimd-image {
+		max-width: 100%;
 	}
 }

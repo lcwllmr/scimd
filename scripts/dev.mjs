@@ -5,7 +5,7 @@ import esbuild from "esbuild";
 const distDir = "dist";
 const templateSrc = "src/template.html";
 const templateDest = `${distDir}/template.html`;
-const watchFile = "example.md";
+const watchFile = "example/fta.md";
 const port = 3000;
 const requiredOutputs = [
   `${distDir}/cli.js`,

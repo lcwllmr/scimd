@@ -16,7 +16,7 @@ jobs:
           node-version: 20
       - run: npm ci
       - run: npm run build
-      - run: ./dist/cli.js render ./example.md -o out
+      - run: ./dist/cli.js render ./example/fta.md -o out
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

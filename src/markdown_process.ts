@@ -1,5 +1,6 @@
 import { parseFrontmatter } from "./markdown_frontmatter.js";
 import { buildDocumentMarkdown } from "./markdown_enrich.js";
+import { scanMarkdownImages } from "./markdown_images.js";
 import { renderMarkdown } from "./markdown_render.js";
 
 type ProcessOptions = {
@@ -13,6 +14,7 @@ export type MarkdownProcessResult = {
   html: string;
   title: string;
   numberedHeadings: boolean;
+  images: ReturnType<typeof scanMarkdownImages>["images"];
   errors: string[];
 };
 
@@ -29,11 +31,19 @@ export function processMarkdown(markdown: string, options: ProcessOptions = {}):
     tocEnabled,
   });
 
+  const imageScan = scanMarkdownImages(preprocessed.markdown);
   const html = renderMarkdown(preprocessed.markdown, {
     throwOnError: options.throwOnError ?? true,
     macros: frontmatter.macros,
     headingSlugs: preprocessed.headingSlugs,
+    images: imageScan.images,
   });
 
-  return { html, title: titleValue, numberedHeadings, errors: frontmatter.errors };
+  return {
+    html,
+    title: titleValue,
+    numberedHeadings,
+    images: imageScan.images,
+    errors: [...frontmatter.errors, ...imageScan.errors],
+  };
 }
