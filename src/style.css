@@ -118,3 +118,7 @@
 		max-width: 100%;
 	}
 }
+
+.katex-display {
+	overflow: auto hidden;
+}
