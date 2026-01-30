@@ -77,7 +77,7 @@ function buildTocMarkdown(headings: HeadingInfo[], numberedHeadings: boolean): s
   }
 
   const minLevel = tocHeadings.reduce((min, heading) => Math.min(min, heading.level), tocHeadings[0].level);
-  const lines: string[] = ["<p class=\"toc-marker\"></p>", ""];
+  const lines: string[] = ["<p class=\"toc-marker\"></p>", "", "**Contents:**", ""];
   const bullet = numberedHeadings ? "1." : "-";
 
   for (const heading of tocHeadings) {
